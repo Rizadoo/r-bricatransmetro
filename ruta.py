@@ -15,4 +15,4 @@ class Ruta:
 
     def mostrar_detalle_ruta(self):
         # Este método es el que usará la Estación para mostrar los datos
-        return f"Ruta {self.codigo} ({self.tipo_ruta}) - Promedio: {self.promedio_espera} min"
+        return f"Ruta {self.codigo} ({self.tipo_ruta}) / Promedio: {self.promedio_espera} min"
