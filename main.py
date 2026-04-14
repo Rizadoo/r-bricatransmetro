@@ -8,7 +8,7 @@ from ruta import Ruta
 from parada import Parada
 
 def validar_nombre(nombre):
-    """Verifica que el nombre no tenga números y sea mayor a 2 letras"""
+    #Esto verifica que el nombre no tenga números y sea mayor a 2 letras
     return nombre.replace(" ", "").isalpha() and len(nombre.strip()) > 2
 
 def main():
@@ -80,7 +80,7 @@ def main():
         while True:
             saldo_act = cliente_actual.tarjeta.consultar_saldo()
             print(f"{cliente_actual.nombre.upper()} / Saldo: ${saldo_act:,}")
-            print("-" * 40)
+            print("=== MENÚ PRINCIPAL ===")
             print("1. Recargar Tarjeta")
             print("2. Consultar Tablero de Rutas")
             print("3. Validar Pasaje (Viajar)")

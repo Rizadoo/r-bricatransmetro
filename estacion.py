@@ -23,5 +23,4 @@ class Estacion:
             for ruta in self.rutas_disponibles:
                 print(f"Ruta:{ruta.codigo} - {ruta.nombre_ruta} / Tipo: {ruta.tipo_ruta} / Espera: {ruta.promedio_espera} min")
 
-        for parada in self.paraderos_asociados:
-            print(f"Paradero: {parada.nombre_parada} / Ubicación: {parada.ubicación}")
+        
