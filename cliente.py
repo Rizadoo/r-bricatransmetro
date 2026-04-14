@@ -10,12 +10,5 @@ class Cliente:
         if self.tarjeta:
             return self.tarjeta.saldo
         return 0
-
-    def procesar_pago(self, cantidad_pasajes, precio_unidad):
-        # Este método permite que cliente pagué una cantidad X de pasajes
-        total_a_pagar = cantidad_pasajes * precio_unidad
         
-        if self.tarjeta.saldo >= total_a_pagar:
-            self.tarjeta.descontar(total_a_pagar)
-            return True
-        return False
+        
