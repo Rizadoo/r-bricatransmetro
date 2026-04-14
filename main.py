@@ -38,6 +38,10 @@ def main():
     for r in [r_r10, r_s10, r_a83, r_a93, r_u30]:
         estacion_retorno.vincular_ruta(r)
 
+    # Vinculamos paradas a la estación
+    for p in [p1, p2, p3, p4]:
+        estacion_retorno.vincular_parada(p)
+
     # Buses de ejemplo
     bus_troncal = Bus("TM-100", 160, "Articulado", "Troncal Olaya Herrera")
     bus_alimentador = Bus("AL-200", 50, "Padron", "Zonas Alimentadoras")
@@ -109,6 +113,11 @@ def main():
 
             elif opcion == "2":
                 estacion_retorno.mostrar_tablero()
+                mostrar_paraderos = input("¿Desea ver los paraderos asociados de los alimentadores? (s/n): ").lower()
+                if mostrar_paraderos == 's':
+                    print("=== Lista de Paraderos alimentadores ===")
+                    for parada in estacion_retorno.paraderos_asociados:
+                        print(parada.mostrar_paradero())
 
             elif opcion == "3":
                 tarifa = 1980 if cliente_actual.tipo_cliente == "Estudiante" else 3700
