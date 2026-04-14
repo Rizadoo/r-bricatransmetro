@@ -1,28 +1,29 @@
 class Transaccion:
-    def __init__(self, id, cliente, tarjeta, monto, fecha):
-        self.id = id
+    def __init__(self, id_trans, cliente, monto, tipoo, saldo_ant, saldo_nue, fecha):
+        self.id = id_trans
         self.cliente = cliente
-        self.tarjeta = tarjeta
         self.monto = monto
+        
+        # Atributos de detalle 
+        self.tipo = tipoo 
+        self.saldo_anterior = saldo_ant
+        self.saldo_nuevo = saldo_nue
         self.fecha = fecha
-        #Estos son detalles adicionales para la evidencia del registro de transacción.
-        self.tipo = ""
-        self.saldo_anterior = 0
-        self.saldo_nuevo = 0
 
-    def definir_detalle(self, tipo, saldo_ant, saldo_nue):
-        self.tipo = tipo
+    def definir_detalle(self, tipo_op, saldo_ant, saldo_nue):
+        """Este método actualiza la información específica de la operación"""
+        self.tipo = tipo_op
         self.saldo_anterior = saldo_ant
         self.saldo_nuevo = saldo_nue
 
     def obtener_resumen(self):
-        # Este método le entrega al main toda la información de la transacción.
+        """Retorna el diccionario para que el Main lo imprima fácil"""
         return {
-            "ID": self.id,
+            "ID Transacción": self.id,
             "Usuario": self.cliente.nombre,
+            "Fecha": self.fecha,
             "Operación": self.tipo,
-            "Monto": self.monto,
-            "Saldo Anterior": self.saldo_anterior,
-            "Nuevo Saldo": self.saldo_nuevo,
-            "Fecha": self.fecha
+            "Monto": f"${self.monto:,}",
+            "Saldo Anterior": f"${self.saldo_anterior:,}",
+            "Nuevo Saldo": f"${self.saldo_nuevo:,}"
         }

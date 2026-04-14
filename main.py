@@ -1,109 +1,133 @@
+import datetime
 from cliente import Cliente
 from tarjeta import Tarjeta
 from transaccion import Transaccion
-from ruta import Ruta
 from bus import Bus
 from estacion import Estacion
+from ruta import Ruta
 from parada import Parada
 
+def validar_nombre(nombre):
+    """Verifica que el nombre no tenga números y sea mayor a 2 letras"""
+    return nombre.replace(" ", "").isalpha() and len(nombre.strip()) > 2
+
 def main():
-    #Configuración inicial del sistema Transmetro
-    estacion_norte = Estacion("E01", "Joe Arroyo", "Norte")
-    parada_unorte = Parada("P01", "Uninorte", "Corredor Univ.")
-    parada_a74 = Parada("P02", "Avenida 7-4", "Atlántico.")
-    parada_a81 = Parada("P03", "Avenida 8-1", "Villa Andalucía.")
-    
-    r_troncal = Ruta("R10", "R10 Joe Arroyo - Portal", "Troncal", 3700)
-    r_troncal.establecer_promedio(5)
-
-    r_troncal2 = Ruta("S10", "S10 Joe Arroyo - Portal", "Troncal", 3700)
-    r_troncal2.establecer_promedio(7)    
-
-    r_troncal3 =Ruta("B10", "B1 Joe Arroyo - Portal", "Troncal", 3700)
-    r_troncal3.establecer_promedio(9)
-
-    r_alimentador = Ruta("U30", "Universidades", "Alimentador", 3700)
-    r_alimentador.establecer_promedio(12)
-
-    r_alimentador2 = Ruta("A7-4", "Clle 74, Cra 46, Avenida Murillo, Clle 70c, Estación Atlantico", "Alimentador", 3700)
-    r_alimentador2.establecer_promedio(15)
-
-    r_alimentador3 = Ruta("A8-1", "Cra 46, Clle 82, Villa Andalucía, Cra 51B, Estación Miramar", "Alimentador", 3700)
-    r_alimentador3.establecer_promedio(18)
-
-    # Vinculación de rutas y paradas a la estación
-    estacion_norte.vincular_ruta(r_troncal)
-    estacion_norte.vincular_ruta(r_troncal2)
-    estacion_norte.vincular_ruta(r_troncal3)
-    estacion_norte.vincular_ruta(r_alimentador)
-    estacion_norte.vincular_ruta(r_alimentador2)
-    estacion_norte.vincular_ruta(r_alimentador3)
-    estacion_norte.vincular_parada(parada_unorte)
-    estacion_norte.vincular_parada(parada_a74)
-    estacion_norte.vincular_parada(parada_a81)
-    
+    # List
+    historial_transacciones = []
     lista_clientes = []
 
-    print("=== BIENVENIDO AL SISTEMA TRANSMETRO ===")
+    # Estación Principal
+    estacion_retorno = Estacion("E-RET", "Joe Arroyo", "Norte")
+
+    #Rutas troncales
+    r_r10 = Ruta("R10", "Joe Arroyo - Portal", "Troncal", 3700)
+    r_s10 = Ruta("S10", "Portal - Joe Arroyo", "Troncal", 3700)
+    
+    #Rutas alimentadoras
+    r_a83 = Ruta("A8-3", "Prado - Joe Arroyo", "Alimentador", 3700)
+    r_a93 = Ruta("A9-3", "Buenavista - Joe Arroyo", "Alimentador", 3700)
+    r_u30 = Ruta("U30", "Universidades - Joe Arroyo", "Alimentador", 3700)
+
+    #Registro de paradas
+    p1 = Parada("P-01", "Calle 72", "Clle 72 con Cra 46")
+    p2 = Parada("P-02", "Parque Central", "Cra 44")
+    p3 = Parada("P-03", "C.C. Buenavista", "Cra 53")
+    p4 = Parada("P-04", "U. del Norte", "Cra 51B")
+
+    # Vinculamos rutas a la estación
+    for r in [r_r10, r_s10, r_a83, r_a93, r_u30]:
+        estacion_retorno.vincular_ruta(r)
+
+    # Buses de ejemplo
+    bus_troncal = Bus("TM-100", 160, "Articulado", "Troncal Olaya Herrera")
+    bus_alimentador = Bus("AL-200", 50, "Padron", "Zonas Alimentadoras")
+
+    print("=== SISTEMA TRANSMETRO BARRANQUILLA ===")
 
     while True:
-        print("\n--- INICIO DE SESIÓN ---")
-        id_ingresado = input("Ingrese su número de cédula (o 'salir'): ")
         
-        if id_ingresado.lower() == 'salir':
-            break
-        
-        if not id_ingresado.isdigit() or int(id_ingresado) <= 0:
-            print("Número de cédula inválido. Intente nuevamente.")
+        print("=== CONTROL DE ACCESO ===")
+        id_ingresado = input("Cédula (10 dígitos) o 'salir': ").strip()
+
+        if id_ingresado.lower() == 'salir': break
+
+        if not id_ingresado.isdigit() or len(id_ingresado) != 10:
+            print("Error: Cédula inválida (debe tener 10 números).")
             continue
-        
-        # Buscar cliente
+
         cliente_actual = next((c for c in lista_clientes if c.id == id_ingresado), None)
 
         if cliente_actual is None:
-            print("Usuario no encontrado. Registrando...")
-            nombre = input("Nombre completo: ")
+            print("Usuario no registrado.")
+            while True:
+                nombre = input("Nombre completo: ").strip()
+                if validar_nombre(nombre): break
+                print("Error: Nombre no válido (solo letras).")
 
-            es_estudiante = input("¿Es estudiante? (s/n): ").lower()
+            es_estudiante = input("¿Aplica descuento de estudiante? (s/n): ").lower()
             tipo = "Estudiante" if es_estudiante == 's' else "General"
-            nueva_tarjeta = Tarjeta(id_ingresado, 0)
-            cliente_actual = Cliente(id_ingresado, nombre, tipo, nueva_tarjeta)
+            
+            nueva_t = Tarjeta(f"T-{id_ingresado}")
+            cliente_actual = Cliente(id_ingresado, nombre, tipo, nueva_t)
             lista_clientes.append(cliente_actual)
-            print(f"Bienvenido {nombre}, Quedaste registrado como {tipo}.")
+            print(f"Bienvenido {nombre} Registrado como {tipo}.")
 
-        #Menu principal para el cliente
+        #Submenú para clientes registrados
         while True:
-            print(f"Usuario: {cliente_actual.nombre} / Saldo: ${cliente_actual.tarjeta.saldo}")
+            saldo_act = cliente_actual.tarjeta.consultar_saldo()
+            print(f"{cliente_actual.nombre.upper()} / Saldo: ${saldo_act:,}")
+            print("-" * 40)
             print("1. Recargar Tarjeta")
-            print("2. Ver Rutas y Promedios")
-            print("3. Pagar Pasaje")
+            print("2. Consultar Tablero de Rutas")
+            print("3. Validar Pasaje (Viajar)")
             print("4. Cerrar Sesión")
             
-            opcion = input("Seleccione una opción: ")
+            opcion = input("Seleccione: ")
 
             if opcion == "1":
-                monto = int(input("Monto a recargar: "))
-                if cliente_actual.tarjeta.validar_recarga(monto):
-                    saldo_ant = cliente_actual.tarjeta.saldo
-                    cliente_actual.tarjeta.aplicar_recarga(monto)
-                    print(f"¡Recarga exitosa! Nuevo saldo: ${cliente_actual.tarjeta.saldo}")
-                else:
-                    print("Error: Monto inválido o supera el límite de $150.000 COP.")
+                try:
+                    monto = int(input("Monto a recargar: "))
+                    if cliente_actual.tarjeta.validar_recarga(monto):
+                        saldo_ant = cliente_actual.tarjeta.consultar_saldo()
+                        cliente_actual.tarjeta.aplicar_recarga(monto)
+                        
+                        t = Transaccion(f"REC-{len(historial_transacciones)+1}", 
+                                        cliente_actual, monto, "Recarga", 
+                                        saldo_ant, cliente_actual.tarjeta.consultar_saldo(), 
+                                        datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+                        
+                        t.definir_detalle("Recarga", saldo_ant, cliente_actual.tarjeta.consultar_saldo())
+                        historial_transacciones.append(t)
+                        
+                        resumen = t.obtener_resumen()
+                        print("=== RECIBO DE RECARGA ===")
+                        for k, v in resumen.items(): print(f"{k}: {v}")
+                    else:
+                        print("Error: Límite de $150.000 excedido.")
+                except ValueError:
+                    print("Error: Ingrese solo números.")
 
             elif opcion == "2":
-                estacion_norte.mostrar_tablero()
+                estacion_retorno.mostrar_tablero()
 
             elif opcion == "3":
-                precio_pasaje = 3700
-                precio_final = precio_pasaje
-                if cliente_actual.tipo_cliente == "Estudiante":
-                    precio_final = precio_pasaje * 0.5  # 50% de descuento para estudiantes
+                tarifa = 1980 if cliente_actual.tipo_cliente == "Estudiante" else 3700
+
+                if cliente_actual.tarjeta.validar_pago(tarifa):
+                    saldo_ant = cliente_actual.tarjeta.consultar_saldo()
+                    cliente_actual.tarjeta.aplicar_descuento(tarifa)
                     
-                if cliente_actual.tarjeta.validar_pago(precio_final):
-                    cliente_actual.tarjeta.aplicar_descuento(precio_final)
-                    print(f"Pago exitoso. Pasaje pagado: ${precio_final}. Saldo restante: ${cliente_actual.tarjeta.saldo}")
+                    v = Transaccion(f"VIA-{len(historial_transacciones)+1}", 
+                                    cliente_actual, tarifa, "Viaje", 
+                                    saldo_ant, cliente_actual.tarjeta.consultar_saldo(), 
+                                    datetime.datetime.now().strftime("%H:%M"))
+                    historial_transacciones.append(v)
+                    
+                    print(f"VIAJE AUTORIZADO (Tarifa: ${tarifa:,})")
+                    # Lógica visual de asignación de bus
+                    print(f"Asignado a: {bus_troncal.placa if tarifa == 3700 else bus_alimentador.placa}")
                 else:
-                    print("Saldo insuficiente para pagar el pasaje. Por favor recargue su tarjeta.")
+                    print(f"Saldo insuficiente. Necesitas ${tarifa:,}.")
 
             elif opcion == "4":
                 break
